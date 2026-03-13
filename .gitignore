@@ -10,6 +10,5 @@ __pycache__/
 .venv/
 server/__pycache__/
 
-# Widget build output
-web/dist/
+# Widget dev
 web/node_modules/

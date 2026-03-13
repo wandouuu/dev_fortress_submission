@@ -1,15 +1,11 @@
-# Nixpacks config for Railway – installs both Python and Node
+# Nixpacks config for Railway – Python only
+# The widget is pre-built and committed to web/dist/
+
 [phases.setup]
-nixPkgs = ["python312", "nodejs_20"]
+nixPkgs = ["python312"]
 
 [phases.install]
-cmds = [
-  "cd server && pip install -r requirements.txt",
-  "cd web && npm install"
-]
-
-[phases.build]
-cmds = ["cd web && npm run build"]
+cmds = ["cd server && pip install -r requirements.txt"]
 
 [start]
 cmd = "cd server && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8787}"
