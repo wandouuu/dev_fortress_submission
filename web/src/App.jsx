@@ -18,6 +18,19 @@ export default function CryptoMarketMonitor() {
   const fetchMarketData = async () => {
     setLoading(true);
     setError(null);
+
+    // If Athena provides the initial data in toolOutput, use that first
+    if (window.openai?.toolOutput?.assets && assets.length === 0) {
+      setAssets(window.openai.toolOutput.assets);
+      setLoading(false);
+      
+      // Let Athena know we are done loading and adjusting height
+      if (window.openai?.notifyIntrinsicHeight) {
+        setTimeout(window.openai.notifyIntrinsicHeight, 100);
+      }
+      return;
+    }
+
     try {
       // The instruction specifies calling POST /mcp
       // We'll use the absolute URL to ensure it works when embedded in Athena as a widget
