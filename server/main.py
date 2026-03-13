@@ -403,12 +403,35 @@ async def _call_tool(req: types.CallToolRequest) -> types.ServerResult:
 mcp_server._mcp_server.request_handlers[types.CallToolRequest] = _call_tool
 
 # ---------------------------------------------------------------------------
-# ASGI app with CORS
+# ASGI app with CORS and custom REST route
 # ---------------------------------------------------------------------------
 app = mcp_server.streamable_http_app()
 
 try:
     from starlette.middleware.cors import CORSMiddleware
+    from starlette.responses import JSONResponse
+
+    async def mcp_data_route(request):
+        """Custom REST endpoint returning the exact JSON format expected by the widget"""
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                coins = []
+                for cid in DEFAULT_COINS.split(","):
+                    result = await _fetch_ticker(client, cid)
+                    if result:
+                        coins.append({
+                            "name": result["name"],
+                            "symbol": result["symbol"],
+                            "price": result["price"],
+                            "market_cap": result["market_cap"],
+                            "volume_24h": result["volume_24h"],
+                            "change_24h": result["percent_change_24h"]
+                        })
+            return JSONResponse({"assets": coins})
+        except Exception as exc:
+            return JSONResponse({"error": str(exc)}, status_code=500)
+
+    app.add_route("/mcp-data", mcp_data_route, methods=["POST", "GET"])
 
     app.add_middleware(
         CORSMiddleware,
@@ -425,6 +448,5 @@ except Exception:
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     import uvicorn
-
     port = int(os.getenv("PORT", "8787"))
     uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
