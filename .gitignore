@@ -1,0 +1,15 @@
+.env
+/node_modules
+/instructions
+*.log
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+server/__pycache__/
+
+# Widget build output
+web/dist/
+web/node_modules/
