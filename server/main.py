@@ -346,6 +346,8 @@ async def _call_tool(req: types.CallToolRequest) -> types.ServerResult:
                 content=[types.TextContent(type="text", text=summary)],
                 structuredContent=structured,
                 _meta={
+                    "openai/outputTemplate": WIDGET_URI,
+                    "openai/widgetAccessible": True,
                     "openai/toolInvocation/invoking": "Fetching crypto prices…",
                     "openai/toolInvocation/invoked": "Crypto prices loaded",
                 },
@@ -385,6 +387,8 @@ async def _call_tool(req: types.CallToolRequest) -> types.ServerResult:
                 ],
                 structuredContent=structured,
                 _meta={
+                    "openai/outputTemplate": WIDGET_URI,
+                    "openai/widgetAccessible": True,
                     "openai/toolInvocation/invoking": "Loading chart data…",
                     "openai/toolInvocation/invoked": "Chart data loaded",
                 },
